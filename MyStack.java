@@ -1,3 +1,4 @@
+
 import java.util.*;
 
 public class MyStack {
@@ -21,14 +22,8 @@ public class MyStack {
 
     }
 
-    int peek() {
-        if (top < 0) {
-            System.out.println("Stack Underflow");
-            return 0;
-        } else {
-            int x = a[top];
-            return x;
-        }
+    void peek() {
+
     }
 
 }
