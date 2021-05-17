@@ -194,7 +194,14 @@ public class Table extends JFrame implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		Object src = e.getSource();
 
-		if ((p1Deck == src && player_turn == 0) || (p2Deck == src && player_turn == 1)) {
+		int cpu_on = 0;
+
+		if (CPU == src) {
+			cpu_on = 1;
+		}
+
+		if ((p1Deck == src && player_turn == 0)
+				|| ((p2Stack == src && player_turn == 1) || (cpu_on == 1 && player_turn == 1))) {
 
 			Card card = cardDeck.dealCard();
 
@@ -208,7 +215,8 @@ public class Table extends JFrame implements ActionListener {
 				deckPile.setIcon(new ImageIcon(Card.directory + "blank.gif"));
 
 		}
-		if ((p1Stack == src && player_turn == 0) || (p2Stack == src && player_turn == 1)) {
+		if ((p1Stack == src && player_turn == 0)
+				|| ((p2Stack == src && player_turn == 1) || (cpu_on == 1 && player_turn == 1))) {
 
 			Card card = stackDeck.removeCard();
 
@@ -238,7 +246,7 @@ public class Table extends JFrame implements ActionListener {
 				}
 		}
 
-		if (p2Lay == src && player_turn == 1) {
+		if ((p2Stack == src && player_turn == 1) || (cpu_on == 1 && player_turn == 1)) {
 			Object[] cards = p2HandPile.getSelectedValues();
 			if (cards != null)
 				for (int i = 0; i < cards.length; i++) {
@@ -262,7 +270,7 @@ public class Table extends JFrame implements ActionListener {
 			}
 		}
 
-		if (p2LayOnStack == src && player_turn == 1) {
+		if ((p2Stack == src && player_turn == 1) || (cpu_on == 1 && player_turn == 1)) {
 			int[] num = p2HandPile.getSelectedIndices();
 			if (num.length == 1) {
 				Object obj = p2HandPile.getSelectedValue();
@@ -292,75 +300,6 @@ public class Table extends JFrame implements ActionListener {
 		// setPanels[rankIndex].array[suitIndex].setText(card.toString());
 		System.out.println("laying " + card);
 		setPanels[rankIndex].array[suitIndex].setIcon(card.getCardImage());
-	}
-
-}
-
-class HandPanel extends JPanel {
-
-	public HandPanel(String name, JList hand, JButton stack, JButton deck, JButton lay, JButton layOnStack) {
-		// model = hand.createSelectionModel();
-
-		setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-		// add(Box.createGlue());
-		JLabel label = new JLabel(name);
-		label.setAlignmentX(Component.CENTER_ALIGNMENT);
-		add(label);
-		stack.setAlignmentX(Component.CENTER_ALIGNMENT);
-		// add(Box.createGlue());
-		add(stack);
-		deck.setAlignmentX(Component.CENTER_ALIGNMENT);
-		// add(Box.createGlue());
-		add(deck);
-		lay.setAlignmentX(Component.CENTER_ALIGNMENT);
-		add(lay);
-		layOnStack.setAlignmentX(Component.CENTER_ALIGNMENT);
-		add(layOnStack);
-		add(Box.createGlue());
-		add(hand);
-		add(Box.createGlue());
-	}
-
-	public HandPanel(String name, JList hand, JButton stack, JButton deck, JButton lay, JButton layOnStack,
-			JButton CPU) {
-		// model = hand.createSelectionModel();
-
-		setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-		// add(Box.createGlue());
-		JLabel label = new JLabel(name);
-		label.setAlignmentX(Component.CENTER_ALIGNMENT);
-		add(label);
-		stack.setAlignmentX(Component.CENTER_ALIGNMENT);
-		// add(Box.createGlue());
-		add(stack);
-		deck.setAlignmentX(Component.CENTER_ALIGNMENT);
-		// add(Box.createGlue());
-		add(deck);
-		lay.setAlignmentX(Component.CENTER_ALIGNMENT);
-		add(lay);
-		layOnStack.setAlignmentX(Component.CENTER_ALIGNMENT);
-		add(layOnStack);
-		add(Box.createGlue());
-		add(hand);
-		add(Box.createGlue());
-		add(CPU);
-		add(Box.createGlue());
-	}
-
-}
-
-class SetPanel extends JPanel {
-	private Set data;
-	JButton[] array = new JButton[4];
-
-	public SetPanel(int index) {
-		super();
-		data = new Set(Card.rank[index]);
-
-		for (int i = 0; i < array.length; i++) {
-			array[i] = new JButton("   ");
-			add(array[i]);
-		}
 	}
 
 }

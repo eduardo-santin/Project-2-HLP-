@@ -192,7 +192,14 @@ public class Proj2 extends JFrame implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         Object src = e.getSource();
 
-        if ((p1Deck == src && player_turn == 0) || (p2Deck == src && player_turn == 1)) {
+        int cpu_on = 0;
+
+        if (CPU == src) {
+            cpu_on = 1;
+        }
+
+        if ((p1Deck == src && player_turn == 0)
+                || ((p2Deck == src && player_turn == 1) || (cpu_on == 1 && player_turn == 1))) {
 
             Card card = cardDeck.dealCard();
 
@@ -206,7 +213,8 @@ public class Proj2 extends JFrame implements ActionListener {
                 deckPile.setIcon(new ImageIcon(Card.directory + "blank.gif"));
 
         }
-        if ((p1Stack == src && player_turn == 0) || (p2Stack == src && player_turn == 1)) {
+        if ((p1Stack == src && player_turn == 0)
+                || ((p2Deck == src && player_turn == 1) || (cpu_on == 1 && player_turn == 1))) {
 
             Card card = stackDeck.removeCard();
 
@@ -236,7 +244,7 @@ public class Proj2 extends JFrame implements ActionListener {
                 }
         }
 
-        if (p2Lay == src && player_turn == 1) {
+        if ((p2Deck == src && player_turn == 1) || (cpu_on == 1 && player_turn == 1)) {
             Object[] cards = p2HandPile.getSelectedValues();
             if (cards != null)
                 for (int i = 0; i < cards.length; i++) {
@@ -260,7 +268,7 @@ public class Proj2 extends JFrame implements ActionListener {
             }
         }
 
-        if (p2LayOnStack == src && player_turn == 1) {
+        if ((p2Deck == src && player_turn == 1) || (cpu_on == 1 && player_turn == 1)) {
             int[] num = p2HandPile.getSelectedIndices();
             if (num.length == 1) {
                 Object obj = p2HandPile.getSelectedValue();
