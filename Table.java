@@ -2,13 +2,17 @@ import java.awt.*;
 import javax.swing.*;
 import java.awt.event.*;
 import java.util.*;
+
 /**
-*	This GUI assumes that you are using a 52 card deck and that you have 13 sets in the deck.
-*	The GUI is simulating a playing table
-	@author Patti Ordonez
-*/
-public class Table extends JFrame implements ActionListener
-{
+ * This GUI assumes that you are using a 52 card deck and that you have 13 sets
+ * in the deck. The GUI is simulating a playing table
+ * 
+ * @author Patti Ordonez
+ */
+public class Table extends JFrame implements ActionListener {
+
+	int player_turn = 0;
+
 	final static int numDealtCards = 9;
 	JPanel player1;
 	JPanel player2;
@@ -20,7 +24,7 @@ public class Table extends JFrame implements ActionListener
 	Deck cardDeck;
 	Deck stackDeck;
 
-	SetPanel [] setPanels = new SetPanel[13];
+	SetPanel[] setPanels = new SetPanel[13];
 	JLabel topOfStack;
 	JLabel deckPile;
 	JButton p1Stack;
@@ -35,28 +39,27 @@ public class Table extends JFrame implements ActionListener
 	JButton p1LayOnStack;
 	JButton p2LayOnStack;
 
+	JButton CPU;
+
 	DefaultListModel p1Hand;
 	DefaultListModel p2Hand;
 
-	private void deal(Card [] cards)
-	{
-		for(int i = 0; i < cards.length; i ++)
-			cards[i] = (Card)cardDeck.dealCard();
+	private void deal(Card[] cards) {
+		for (int i = 0; i < cards.length; i++)
+			cards[i] = (Card) cardDeck.dealCard();
 	}
 
-	public Table()
-	{
+	public Table() {
 		super("The Card Game of the Century");
 
 		setLayout(new BorderLayout());
-		setSize(1200,700);
-
+		setSize(1200, 700);
 
 		cardDeck = new Deck();
 
-		for(int i = 0; i < Card.suit.length; i++){
-			for(int j = 0; j < Card.rank.length; j++){
-				Card card = new Card(Card.suit[i],Card.rank[j]);
+		for (int i = 0; i < Card.suit.length; i++) {
+			for (int j = 0; j < Card.rank.length; j++) {
+				Card card = new Card(Card.suit[i], Card.rank[j]);
 				cardDeck.addCard(card);
 			}
 		}
@@ -65,9 +68,8 @@ public class Table extends JFrame implements ActionListener
 
 		JPanel top = new JPanel();
 
-		for (int i = 0; i < Card.rank.length;i++)
+		for (int i = 0; i < Card.rank.length; i++)
 			setPanels[i] = new SetPanel(Card.getRankIndex(Card.rank[i]));
-
 
 		top.add(setPanels[0]);
 		top.add(setPanels[1]);
@@ -78,12 +80,8 @@ public class Table extends JFrame implements ActionListener
 
 		player1.add(top);
 
-
-
-
 		add(player1, BorderLayout.NORTH);
 		JPanel bottom = new JPanel();
-
 
 		bottom.add(setPanels[4]);
 		bottom.add(setPanels[5]);
@@ -93,14 +91,10 @@ public class Table extends JFrame implements ActionListener
 
 		player2 = new JPanel();
 
-
-
-
 		player2.add(bottom);
 		add(player2, BorderLayout.SOUTH);
 
-
-		JPanel middle = new JPanel(new GridLayout(1,3));
+		JPanel middle = new JPanel(new GridLayout(1, 3));
 
 		p1Stack = new JButton("Stack");
 		p1Stack.addActionListener(this);
@@ -111,14 +105,15 @@ public class Table extends JFrame implements ActionListener
 		p1LayOnStack = new JButton("LayOnStack");
 		p1LayOnStack.addActionListener(this);
 
+		CPU = new JButton("CPU");
+		CPU.addActionListener(this);
 
-		Card [] cardsPlayer1 = new Card[numDealtCards];
+		Card[] cardsPlayer1 = new Card[numDealtCards];
 		deal(cardsPlayer1);
 		p1Hand = new DefaultListModel();
-		for(int i = 0; i < cardsPlayer1.length; i++)
+		for (int i = 0; i < cardsPlayer1.length; i++)
 			p1Hand.addElement(cardsPlayer1[i]);
 		p1HandPile = new JList(p1Hand);
-
 
 		middle.add(new HandPanel("Player 1", p1HandPile, p1Stack, p1Deck, p1Lay, p1LayOnStack));
 
@@ -127,7 +122,6 @@ public class Table extends JFrame implements ActionListener
 		deckPiles.add(Box.createGlue());
 		JPanel left = new JPanel();
 		left.setAlignmentY(Component.CENTER_ALIGNMENT);
-
 
 		stack = new JLabel("Stack");
 		stack.setAlignmentY(Component.CENTER_ALIGNMENT);
@@ -148,13 +142,12 @@ public class Table extends JFrame implements ActionListener
 		deck.setAlignmentY(Component.CENTER_ALIGNMENT);
 		right.add(deck);
 		deckPile = new JLabel();
-		deckPile.setIcon(new ImageIcon(Card.directory + "b.gif"));
+		deckPile.setIcon(new ImageIcon(Card.directory + "cardback.gif"));
 		deckPile.setAlignmentY(Component.CENTER_ALIGNMENT);
 		right.add(deckPile);
 		deckPiles.add(right);
 		deckPiles.add(Box.createGlue());
 		middle.add(deckPiles);
-
 
 		p2Stack = new JButton("Stack");
 		p2Stack.addActionListener(this);
@@ -165,21 +158,20 @@ public class Table extends JFrame implements ActionListener
 		p2LayOnStack = new JButton("LayOnStack");
 		p2LayOnStack.addActionListener(this);
 
-		Card [] cardsPlayer2 = new Card[numDealtCards];
+		Card[] cardsPlayer2 = new Card[numDealtCards];
 		deal(cardsPlayer2);
 		p2Hand = new DefaultListModel();
 
-		for(int i = 0; i < cardsPlayer2.length; i++)
+		for (int i = 0; i < cardsPlayer2.length; i++)
 			p2Hand.addElement(cardsPlayer2[i]);
 
 		p2HandPile = new JList(p2Hand);
 
-		middle.add(new HandPanel("Player 2", p2HandPile, p2Stack, p2Deck, p2Lay, p2LayOnStack));
+		middle.add(new HandPanel("Player 2", p2HandPile, p2Stack, p2Deck, p2Lay, p2LayOnStack, CPU));
 
 		add(middle, BorderLayout.CENTER);
 
-		JPanel leftBorder = new JPanel(new GridLayout(2,1));
-
+		JPanel leftBorder = new JPanel(new GridLayout(2, 1));
 
 		setPanels[9].setLayout(new BoxLayout(setPanels[9], BoxLayout.Y_AXIS));
 		setPanels[10].setLayout(new BoxLayout(setPanels[10], BoxLayout.Y_AXIS));
@@ -187,7 +179,7 @@ public class Table extends JFrame implements ActionListener
 		leftBorder.add(setPanels[10]);
 		add(leftBorder, BorderLayout.WEST);
 
-		JPanel rightBorder = new JPanel(new GridLayout(2,1));
+		JPanel rightBorder = new JPanel(new GridLayout(2, 1));
 
 		setPanels[11].setLayout(new BoxLayout(setPanels[11], BoxLayout.Y_AXIS));
 		setPanels[12].setLayout(new BoxLayout(setPanels[12], BoxLayout.Y_AXIS));
@@ -197,137 +189,126 @@ public class Table extends JFrame implements ActionListener
 
 	}
 
-	public void actionPerformed(ActionEvent e)
-	{
+	public void actionPerformed(ActionEvent e) {
 		Object src = e.getSource();
-		if(p1Deck == src|| p2Deck == src){
+
+		if ((p1Deck == src && player_turn == 0) || (p2Deck == src && player_turn == 1)) {
 
 			Card card = cardDeck.dealCard();
 
-			if (card != null){
-				if(src == p1Deck)
+			if (card != null) {
+				if (src == p1Deck)
 					p1Hand.addElement(card);
 				else
 					p2Hand.addElement(card);
 			}
-			if(cardDeck.getSizeOfDeck() == 0)
+			if (cardDeck.getSizeOfDeck() == 0)
 				deckPile.setIcon(new ImageIcon(Card.directory + "blank.gif"));
 
 		}
-		if(p1Stack == src || p2Stack == src){
+		if ((p1Stack == src && player_turn == 0) || (p2Stack == src && player_turn == 1)) {
 
 			Card card = stackDeck.removeCard();
 
-			if(card != null){
+			if (card != null) {
 				Card topCard = stackDeck.peek();
 				if (topCard != null)
 					topOfStack.setIcon(topCard.getCardImage());
 				else
 					topOfStack.setIcon(new ImageIcon(Card.directory + "blank.gif"));
 
-				if(p1Stack == src)
+				if (p1Stack == src)
 					p1Hand.addElement(card);
 				else
 					p2Hand.addElement(card);
-
 
 			}
 
 		}
 
-		if(p1Lay == src){
-			Object [] cards = p1HandPile.getSelectedValues();
+		if (p1Lay == src && player_turn == 0) {
+			Object[] cards = p1HandPile.getSelectedValues();
 			if (cards != null)
-				for(int i = 0; i < cards.length; i++)
-				{
-					Card card = (Card)cards[i];
+				for (int i = 0; i < cards.length; i++) {
+					Card card = (Card) cards[i];
 					layCard(card);
 					p1Hand.removeElement(card);
 				}
 		}
 
-
-		if(p2Lay == src){
-			Object [] cards = p2HandPile.getSelectedValues();
+		if (p2Lay == src && player_turn == 1) {
+			Object[] cards = p2HandPile.getSelectedValues();
 			if (cards != null)
-				for(int i = 0; i < cards.length; i++)
-				{
-					Card card = (Card)cards[i];
+				for (int i = 0; i < cards.length; i++) {
+					Card card = (Card) cards[i];
 					layCard(card);
 					p2Hand.removeElement(card);
 				}
 		}
 
-
-		if(p1LayOnStack == src){
-			int [] num  = p1HandPile.getSelectedIndices();
-			if (num.length == 1)
-			{
+		if (p1LayOnStack == src && player_turn == 0) {
+			int[] num = p1HandPile.getSelectedIndices();
+			if (num.length == 1) {
 				Object obj = p1HandPile.getSelectedValue();
-				if (obj != null)
-				{
+				if (obj != null) {
 					p1Hand.removeElement(obj);
-					Card card = (Card)obj;
+					Card card = (Card) obj;
 					stackDeck.addCard(card);
 					topOfStack.setIcon(card.getCardImage());
+					player_turn = 1;
 				}
 			}
 		}
 
-
-		if(p2LayOnStack == src){
-			int [] num  = p2HandPile.getSelectedIndices();
-			if (num.length == 1)
-			{
+		if (p2LayOnStack == src && player_turn == 1) {
+			int[] num = p2HandPile.getSelectedIndices();
+			if (num.length == 1) {
 				Object obj = p2HandPile.getSelectedValue();
-				if (obj != null)
-				{
+				if (obj != null) {
 
 					p2Hand.removeElement(obj);
-					Card card = (Card)obj;
+					Card card = (Card) obj;
 					stackDeck.addCard(card);
 					topOfStack.setIcon(card.getCardImage());
+					player_turn = 0;
 				}
 			}
 		}
 
 	}
 
-	public static void main(String args[])
-	{
+	public static void main(String args[]) {
 		Table t = new Table();
 		t.setVisible(true);
 	}
-	void layCard(Card card)
-	{
+
+	void layCard(Card card) {
 		char rank = card.getRank();
 		char suit = card.getSuit();
-		int suitIndex =  Card.getSuitIndex(suit);
-		int rankIndex =  Card.getRankIndex(rank);
-		//setPanels[rankIndex].array[suitIndex].setText(card.toString());
+		int suitIndex = Card.getSuitIndex(suit);
+		int rankIndex = Card.getRankIndex(rank);
+		// setPanels[rankIndex].array[suitIndex].setText(card.toString());
 		System.out.println("laying " + card);
 		setPanels[rankIndex].array[suitIndex].setIcon(card.getCardImage());
 	}
 
 }
 
-class HandPanel extends JPanel
-{
+class HandPanel extends JPanel {
 
-	public HandPanel(String name,JList hand, JButton stack, JButton deck, JButton lay, JButton layOnStack)
-	{
-		//model = hand.createSelectionModel();
+	public HandPanel(String name, JList hand, JButton stack, JButton deck, JButton lay, JButton layOnStack) {
+		// model = hand.createSelectionModel();
 
 		setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-//		add(Box.createGlue());
+		// add(Box.createGlue());
 		JLabel label = new JLabel(name);
 		label.setAlignmentX(Component.CENTER_ALIGNMENT);
 		add(label);
 		stack.setAlignmentX(Component.CENTER_ALIGNMENT);
-//		add(Box.createGlue());
+		// add(Box.createGlue());
 		add(stack);
 		deck.setAlignmentX(Component.CENTER_ALIGNMENT);
-//		add(Box.createGlue());
+		// add(Box.createGlue());
 		add(deck);
 		lay.setAlignmentX(Component.CENTER_ALIGNMENT);
 		add(lay);
@@ -338,18 +319,43 @@ class HandPanel extends JPanel
 		add(Box.createGlue());
 	}
 
-}
-class SetPanel extends JPanel
-{
-	private Set data;
-	JButton [] array = new JButton[4];
+	public HandPanel(String name, JList hand, JButton stack, JButton deck, JButton lay, JButton layOnStack,
+			JButton CPU) {
+		// model = hand.createSelectionModel();
 
-	public SetPanel(int index)
-	{
+		setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+		// add(Box.createGlue());
+		JLabel label = new JLabel(name);
+		label.setAlignmentX(Component.CENTER_ALIGNMENT);
+		add(label);
+		stack.setAlignmentX(Component.CENTER_ALIGNMENT);
+		// add(Box.createGlue());
+		add(stack);
+		deck.setAlignmentX(Component.CENTER_ALIGNMENT);
+		// add(Box.createGlue());
+		add(deck);
+		lay.setAlignmentX(Component.CENTER_ALIGNMENT);
+		add(lay);
+		layOnStack.setAlignmentX(Component.CENTER_ALIGNMENT);
+		add(layOnStack);
+		add(Box.createGlue());
+		add(hand);
+		add(Box.createGlue());
+		add(CPU);
+		add(Box.createGlue());
+	}
+
+}
+
+class SetPanel extends JPanel {
+	private Set data;
+	JButton[] array = new JButton[4];
+
+	public SetPanel(int index) {
 		super();
 		data = new Set(Card.rank[index]);
 
-		for(int i = 0; i < array.length; i++){
+		for (int i = 0; i < array.length; i++) {
 			array[i] = new JButton("   ");
 			add(array[i]);
 		}
