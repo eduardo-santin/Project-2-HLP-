@@ -1,5 +1,11 @@
+package src;
+
 import java.awt.*;
 import javax.swing.*;
+
+import HandPanel;
+import SetPanel;
+
 import java.awt.event.*;
 import java.util.*;
 
